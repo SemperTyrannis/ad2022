@@ -8,7 +8,7 @@ public class ProcesadorRutas {
 		
 		resultadoProceso.append("Vamos a buscar en la ruta: " + ruta + "\n");
 		resultadoProceso.append("Procesando directorio...\n");
-		
+		resultadoProceso.append (Constructo.files(ruta ));
 		return resultadoProceso;
 	}
 
