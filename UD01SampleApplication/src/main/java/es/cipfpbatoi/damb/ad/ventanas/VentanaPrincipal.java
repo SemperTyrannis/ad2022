@@ -2,10 +2,13 @@ package es.cipfpbatoi.damb.ad.ventanas;
 
 import java.io.File;
 
+import es.cipfpbatoi.damb.ad.procesador.rutas.ConfiguracionBusqueda;
 import es.cipfpbatoi.damb.ad.procesador.rutas.ProcesadorRutas;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -21,6 +24,11 @@ public class VentanaPrincipal {
 	
 	private TextField textFieldRuta;
 	private Button buttonSeleccionarDirectorio;
+	
+	private CheckBox checkBuscarRecursivamente;
+	private CheckBox checkMostrarArchivosOcultos;
+	
+	private TextField textFieldFiltroNombre;
 	
 	private Button buttonProcesarRuta;
 	private TextArea textAreaFicherosEncontrados;
@@ -42,11 +50,11 @@ public class VentanaPrincipal {
 		this.ventana.setScene(scene);
 		this.ventana.show();
 
-		this.addBotonSeleccionarDir();
-		this.addTextareaMensajes();
+		this.addSeleccionRuta();
+		this.addProcesamiento();
 	}
 
-	private void addBotonSeleccionarDir() {
+	private void addSeleccionRuta() {
 		
 		HBox contenedorRuta = new HBox();
 		this.contenedorPrincipal.getChildren().add(contenedorRuta);
@@ -71,7 +79,32 @@ public class VentanaPrincipal {
 		
 	}
 	
-	private void addTextareaMensajes() {
+	private void addProcesamiento() {
+		
+		HBox contenedorCheckBoxes = new HBox();
+		this.contenedorPrincipal.getChildren().add(contenedorCheckBoxes);
+		
+		contenedorCheckBoxes.setSpacing(10);
+		
+		this.checkBuscarRecursivamente = new CheckBox("Buscar dentro de los directorios");
+		contenedorCheckBoxes.getChildren().add(this.checkBuscarRecursivamente);
+		
+		this.checkMostrarArchivosOcultos = new CheckBox("Mostrar archivos ocultos");
+		contenedorCheckBoxes.getChildren().add(this.checkMostrarArchivosOcultos);
+		
+		HBox contenedorFiltros = new HBox();
+		this.contenedorPrincipal.getChildren().add(contenedorFiltros);
+		
+		contenedorFiltros.setSpacing(10);
+		
+		Label label = new Label("El nombre contiene: ");
+		contenedorFiltros.getChildren().add(label);
+		
+		this.textFieldFiltroNombre = new TextField();
+		contenedorFiltros.getChildren().add(this.textFieldFiltroNombre);
+		
+		this.textFieldFiltroNombre.setPrefWidth(350);
+		
 		this.buttonProcesarRuta = new Button("Buscar ficheros");
 		this.contenedorPrincipal.getChildren().add(this.buttonProcesarRuta);
 		
@@ -99,8 +132,14 @@ public class VentanaPrincipal {
 	}
 
 	private void onClickButtonProcesarRuta() {
-		String ruta = this.textFieldRuta.getText();
-		StringBuilder resultadoProceso = ProcesadorRutas.procesarRuta(ruta);
+		ConfiguracionBusqueda configuracionBusqueda = new ConfiguracionBusqueda();
+		
+		configuracionBusqueda.setRutaInicial(this.textFieldRuta.getText());
+		configuracionBusqueda.setFiltroNombre(this.textFieldFiltroNombre.getText());
+		configuracionBusqueda.setBuscarRecursivamente(this.checkBuscarRecursivamente.isSelected());
+		configuracionBusqueda.setMostrarArchivosOcultos(this.checkMostrarArchivosOcultos.isSelected());
+		
+		StringBuilder resultadoProceso = ProcesadorRutas.procesarRuta(configuracionBusqueda);
 		
 		this.textAreaFicherosEncontrados.appendText(resultadoProceso.toString());
 	}
